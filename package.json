@@ -1,0 +1,20 @@
+{
+  "name": "@garno/powered-by",
+  "version": "1.0.0",
+  "description": "The \"Powered by Garno\" credit as a dependency-free web component.",
+  "type": "module",
+  "main": "./powered-by-garno.js",
+  "module": "./powered-by-garno.js",
+  "exports": {
+    ".": "./powered-by-garno.js"
+  },
+  "files": [
+    "powered-by-garno.js",
+    "README.md"
+  ],
+  "sideEffects": true,
+  "keywords": ["web-component", "custom-element", "badge", "garno"],
+  "author": "Garno <https://garno.com.au/>",
+  "license": "UNLICENSED",
+  "private": true
+}

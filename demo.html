@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Powered by Garno - demo</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; }
+    section { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 32px; flex-wrap: wrap; }
+    code { font-size: 13px; opacity: 0.7; }
+    .paper { background: #f7f6f2; color: #14171a; }
+    .white { background: #fff; color: #333; }
+    .night { background: #0c0f14; color: #d0d4da; }
+    .brand { background: #7a1f3d; color: #f5e9ee; }
+    .spacer { height: 60vh; display: grid; place-items: center; color: #888; }
+  </style>
+  <script type="module" src="./powered-by-garno.js"></script>
+</head>
+<body>
+  <section class="paper">
+    <code>theme="light"</code>
+    <powered-by-garno theme="light"><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+  </section>
+  <section class="white">
+    <code>default (inherit), size="md"</code>
+    <powered-by-garno size="md"><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+  </section>
+  <section class="night">
+    <code>theme="dark"</code>
+    <powered-by-garno theme="dark"><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+  </section>
+  <section class="brand">
+    <code>default (inherit) on a client's own colour</code>
+    <powered-by-garno><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+  </section>
+  <div class="spacer">scroll: the badge below animates when it comes into view</div>
+  <section class="night">
+    <span>© 2026 Client Pty Ltd</span>
+    <powered-by-garno theme="dark"><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+  </section>
+</body>
+</html>
