@@ -1,0 +1,6 @@
+/vendor/
+/node_modules/
+/build/
+/powered-by-garno.zip
+composer.lock
+.DS_Store

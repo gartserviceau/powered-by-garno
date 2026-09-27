@@ -1,0 +1,6 @@
+# Kept out of Composer dist archives (what `composer require` downloads).
+/.github        export-ignore
+/bin            export-ignore
+/demo.html      export-ignore
+/.gitattributes export-ignore
+/.gitignore     export-ignore

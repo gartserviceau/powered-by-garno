@@ -1,114 +1,110 @@
 # Powered by Garno
 
-The "Powered by Garno" credit for client sites: the Garno mark (the G with
-the amber arrow) and the words *Powered by Garno*, as a small animated link.
+The "Powered by Garno" credit for sites built or looked after by
+[Garno](https://garno.com.au/): the Garno mark (the G with the amber arrow)
+and the words *Powered by Garno*, as a small animated link.
 
-It is a standard **web component** in one dependency-free file
-(`powered-by-garno.js`, ~8 kB unminified, ~3 kB gzipped). Browsers understand custom elements
-natively, so the same file works in WordPress, Laravel, Node/Express, Next.js,
-Nuxt, React, Vue, Svelte or a static page without an adapter.
+One package, every platform:
 
-- **Isolated.** Shadow DOM: the client's CSS cannot break it, and its CSS
-  cannot leak into the client's site.
-- **CSP-friendly.** Styles go through a constructable stylesheet, which a
-  strict `style-src` without `'unsafe-inline'` allows. No inline scripts.
-- **No third-party requests.** No fonts, no tracking, no remote loading. The
-  logo is inline SVG. Ship the file with the site; do not hot-link it from
-  garno.com.au (that would add a third-party request to every client page).
-- **Accessible.** One link, named "Powered by Garno (opens in a new tab)", with
-  a visible focus ring. Animation never runs under `prefers-reduced-motion`.
-- **Never shows a bare link.** The fallback inside the tag is the static
-  badge image, so without JavaScript the credit still looks right.
-- **Loads anywhere.** A plain script with no imports or exports: it works as
-  `<script defer>`, as `<script type="module">`, from a bundler `import`, and
-  even on a page opened straight from disk.
+| Site | Install | Use |
+|------|---------|-----|
+| WordPress + Composer (Bedrock) | `composer require garno/powered-by-garno` | `[powered_by_garno theme="dark"]` or `garno_badge()` |
+| WordPress, no Composer | Upload `powered-by-garno.zip` from [Releases](https://github.com/gartserviceau/powered-by-garno/releases) | same |
+| Laravel | `composer require garno/powered-by-garno` | `<x-garno-badge theme="dark" />` |
+| Node, React, Vue, Next.js | `npm install github:gartserviceau/powered-by-garno#v1.0.0` | `import 'powered-by-garno'` + `<powered-by-garno>` |
+| Static HTML | Download the release files | `<script>` + `<powered-by-garno>` |
+| No scripts allowed (site builders, PDFs) | `powered-by-garno-dark.svg` / `-light.svg` | a plain `<img>` link |
 
-## Markup
+## What it is
 
-```html
-<script src="/path/to/powered-by-garno.js" defer></script>
+A standard **web component** in one dependency-free file
+(`powered-by-garno.js`, ~8 kB, ~3 kB gzipped). Browsers understand custom
+elements natively, so no framework adapter is needed.
 
-<powered-by-garno theme="dark">
-  <a href="https://garno.com.au/">
-    <img src="/path/to/powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24">
-  </a>
-</powered-by-garno>
-```
+- **Isolated.** Shadow DOM: the client's CSS cannot break it and its CSS cannot
+  leak out.
+- **CSP-friendly.** Styles use a constructable stylesheet, which a strict
+  `style-src` without `'unsafe-inline'` allows.
+- **No third-party requests.** No fonts, no tracking, no remote loading. Ship
+  the files with the site; never hot-link them from another domain.
+- **Accessible.** One link named "Powered by Garno (opens in a new tab)", a
+  visible focus ring, and no animation under `prefers-reduced-motion`.
+- **Never a bare link.** The fallback inside the tag is the static badge image,
+  so without JavaScript the credit still looks right.
+- **Animated.** The arrow shoots through the G once when the badge scrolls into
+  view, and nudges forward on hover and keyboard focus. The SVG images play the
+  same animation once on load.
 
-Use `powered-by-garno-light.svg` in the fallback on light footers.
-
-### Image only
-
-Where you cannot add a script - a site builder, an email signature, a PDF -
-use the image on its own. It is an SVG that plays the same arrow animation
-once when it loads (and not under reduced motion):
-
-```html
-<a href="https://garno.com.au/" target="_blank" rel="noopener">
-  <img src="powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24">
-</a>
-```
-
-For email, convert it to PNG first: most email clients do not show SVG.
+## Attributes
 
 | Attribute | Values | Default |
 |-----------|--------|---------|
-| `theme`   | `inherit` - takes the surrounding text colour, blends into any footer<br>`light` - brand colours, for light backgrounds<br>`dark` - for dark footers | `inherit` |
-| `size`    | `sm` (12px text), `md` (14px) | `sm` |
-| `href`    | Any URL | `https://garno.com.au/?utm_source=<client host>&utm_medium=powered-by-badge` |
-| `target`  | `_blank`, `_self` | `_blank` |
-| `rel`     | Extra relations, e.g. `nofollow` (`noopener` is added for a new tab) | none |
+| `theme` | `inherit` (takes the surrounding text colour), `light`, `dark` | `inherit` |
+| `size` | `sm` (12px text), `md` (14px) | `sm` |
+| `href` | Any URL | `https://garno.com.au/?utm_source=<client host>&utm_medium=powered-by-badge` |
+| `target` | `_blank`, `_self` | `_blank` |
+| `rel` | Extra relations, e.g. `nofollow` (`noopener` is added for a new tab) | none |
 
-Animation: the arrow shoots through the G once when the badge first scrolls
-into view, and nudges forward on hover and keyboard focus.
-
-Styling from outside: the link is exposed as `::part(link)`, e.g.
+The link is exposed as `::part(link)` for spacing tweaks:
 `powered-by-garno::part(link) { padding: 8px; }`.
 
 ## WordPress
 
-Copy this folder into `wp-content/plugins/powered-by-garno/` and activate
-**Powered by Garno**. Then place it:
+**With Composer (Bedrock).** Add the repository once, then require it.
+Bedrock's `composer/installers` puts it in `web/app/plugins/`:
 
-- Block or classic editor, footer widget: `[powered_by_garno theme="dark"]`
-- Theme footer template: `<?php garno_badge(['theme' => 'dark']); ?>`
+```json
+"repositories": [
+  { "type": "vcs", "url": "https://github.com/gartserviceau/powered-by-garno" }
+]
+```
+
+```bash
+composer require garno/powered-by-garno:^1.0
+wp plugin activate powered-by-garno
+```
+
+**Without Composer.** Download `powered-by-garno.zip` from the latest release
+and upload it under *Plugins → Add New → Upload Plugin*.
+
+**Placing it** in the client's footer:
+
+- Footer widget or block: `[powered_by_garno theme="dark"]`
+- Theme template: `<?php garno_badge(['theme' => 'dark']); ?>`
 - Sage/Blade: `@php(garno_badge(['theme' => 'dark']))`
 
-The script is only enqueued on pages that render a badge.
+The script is only loaded on pages that render a badge.
 
 ## Laravel
 
-Copy `powered-by-garno.js` and the two SVGs to `public/vendor/garno/`, then in the layout:
+Add the repository to `composer.json` as above, then:
 
-```blade
-<script src="{{ asset('vendor/garno/powered-by-garno.js') }}" defer></script>
-...
-<footer>
-  <powered-by-garno theme="dark">
-    <a href="https://garno.com.au/"><img src="{{ asset('vendor/garno/powered-by-garno-dark.svg') }}" alt="Powered by Garno" width="140" height="24"></a>
-  </powered-by-garno>
-</footer>
+```bash
+composer require garno/powered-by-garno:^1.0
+php artisan vendor:publish --tag=garno-badge
 ```
 
-With Vite, keep the copy in `resources/js/vendor/` and import it from
-`resources/js/app.js` instead: `import './vendor/powered-by-garno.js';`
+The service provider is auto-discovered. In the footer:
+
+```blade
+<x-garno-badge theme="dark" />
+```
+
+It includes the script once per page and renders the SVG fallback. Props:
+`theme`, `size`, `href`, `target`, `rel`. After upgrading, run
+`php artisan vendor:publish --tag=garno-badge --force` to refresh the files.
 
 ## Node, React, Vue, Next.js
 
-Install from the file until the package is published:
-
 ```bash
-npm install ../path/to/packages/powered-by-garno
+npm install github:gartserviceau/powered-by-garno#v1.0.0
 ```
 
 ```js
-import '@garno/powered-by';
+import 'powered-by-garno';
 ```
 
-Then use the tag in any template:
-
 ```jsx
-// React 19+ passes attributes to custom elements directly.
 <powered-by-garno theme="dark">
   <a href="https://garno.com.au/">
     <img src="/powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24" />
@@ -116,19 +112,56 @@ Then use the tag in any template:
 </powered-by-garno>
 ```
 
-(Copy the SVG into the app's `public/` folder.) Next.js / Nuxt: import it in a client-only component (`'use client'` or
-`<ClientOnly>`), because `customElements` exists only in the browser. The
-server still renders the fallback image.
+Copy the SVG from `node_modules/powered-by-garno/` into the app's `public/`.
+Next.js / Nuxt: import it in a client-only component (`'use client'` or
+`<ClientOnly>`) because `customElements` only exists in the browser; the server
+still renders the fallback image.
 
-Express or plain HTML: serve the file statically and use the `<script>` tag.
+## Static HTML
+
+```html
+<script src="/powered-by-garno.js" defer></script>
+
+<powered-by-garno theme="dark">
+  <a href="https://garno.com.au/">
+    <img src="/powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24">
+  </a>
+</powered-by-garno>
+```
+
+## Image only
+
+Where no script can be added:
+
+```html
+<a href="https://garno.com.au/" target="_blank" rel="noopener">
+  <img src="powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24">
+</a>
+```
+
+Email clients do not show SVG; convert to PNG for email signatures.
 
 ## Links and SEO
 
-The badge is a branded link ("Garno"), not keyword anchor text, which is what
-search engines expect from a site credit. If a client prefers the credit not
-to pass link weight, add `rel="nofollow"` - agree it with the client rather
-than deciding for them.
+The badge links with a branded anchor ("Garno"), which is what search engines
+expect from a site credit. If a client prefers the credit not to pass link
+weight, add `rel="nofollow"`; agree it with the client.
+
+## Releasing a new version
+
+1. Bump the version in `powered-by-garno.php` (header and `GARNO_BADGE_VERSION`),
+   `powered-by-garno.js` (`VERSION`) and `package.json`.
+   `bin/check-version.sh` checks they agree; CI runs it on every push.
+2. Commit, then tag and push:
+
+   ```bash
+   git tag v1.0.1 && git push origin main v1.0.1
+   ```
+
+3. The release workflow checks the tag against the code, builds
+   `powered-by-garno.zip` and publishes the GitHub release. Composer and npm
+   installs pick up the tag directly.
 
 ## Demo
 
-Open `demo.html` in a browser - it works straight from disk.
+Open `demo.html` in a browser.

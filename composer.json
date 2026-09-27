@@ -1,0 +1,31 @@
+{
+    "name": "garno/powered-by-garno",
+    "description": "The Powered by Garno credit badge: a dependency-free web component, a WordPress plugin and a Laravel Blade component.",
+    "type": "wordpress-plugin",
+    "license": "proprietary",
+    "homepage": "https://garno.com.au/",
+    "authors": [
+        {
+            "name": "Garno",
+            "homepage": "https://garno.com.au/"
+        }
+    ],
+    "require": {
+        "php": ">=8.0"
+    },
+    "suggest": {
+        "composer/installers": "Installs the package into wp-content/plugins on WordPress (Bedrock ships it)."
+    },
+    "autoload": {
+        "psr-4": {
+            "Garno\\PoweredBy\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Garno\\PoweredBy\\Laravel\\BadgeServiceProvider"
+            ]
+        }
+    }
+}

@@ -1,0 +1,37 @@
+name: Release
+
+# Push a tag like v1.0.1 to publish a release. Composer and npm installs read
+# the tag directly; this workflow adds the WordPress plugin zip for sites that
+# install plugins by upload rather than Composer.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build the WordPress zip and publish the release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+
+      - name: The tag matches the code's version
+        run: bash bin/check-version.sh "${GITHUB_REF_NAME#v}"
+
+      - name: Build the plugin zip
+        run: |
+          mkdir -p build/powered-by-garno
+          cp powered-by-garno.php powered-by-garno.js \
+             powered-by-garno-light.svg powered-by-garno-dark.svg README.md \
+             build/powered-by-garno/
+          (cd build && zip -qr ../powered-by-garno.zip powered-by-garno)
+          unzip -l powered-by-garno.zip
+
+      - name: Publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" powered-by-garno.zip \
+            --title "$GITHUB_REF_NAME" --generate-notes

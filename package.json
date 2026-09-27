@@ -1,5 +1,5 @@
 {
-  "name": "@garno/powered-by",
+  "name": "powered-by-garno",
   "version": "1.0.0",
   "description": "The \"Powered by Garno\" credit as a dependency-free web component.",
   "type": "module",
@@ -15,8 +15,17 @@
     "README.md"
   ],
   "sideEffects": true,
-  "keywords": ["web-component", "custom-element", "badge", "garno"],
+  "keywords": [
+    "web-component",
+    "custom-element",
+    "badge",
+    "garno"
+  ],
   "author": "Garno <https://garno.com.au/>",
   "license": "UNLICENSED",
-  "private": true
+  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gartserviceau/powered-by-garno.git"
+  }
 }
