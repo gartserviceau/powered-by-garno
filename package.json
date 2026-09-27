@@ -10,6 +10,8 @@
   },
   "files": [
     "powered-by-garno.js",
+    "powered-by-garno-light.svg",
+    "powered-by-garno-dark.svg",
     "README.md"
   ],
   "sideEffects": true,

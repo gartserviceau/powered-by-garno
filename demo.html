@@ -12,31 +12,36 @@
     .white { background: #fff; color: #333; }
     .night { background: #0c0f14; color: #d0d4da; }
     .brand { background: #7a1f3d; color: #f5e9ee; }
+    a img { display: block; }
     .spacer { height: 60vh; display: grid; place-items: center; color: #888; }
   </style>
-  <script type="module" src="./powered-by-garno.js"></script>
+  <script src="./powered-by-garno.js" defer></script>
 </head>
 <body>
   <section class="paper">
     <code>theme="light"</code>
-    <powered-by-garno theme="light"><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+    <powered-by-garno theme="light"><a href="https://garno.com.au/"><img src="./powered-by-garno-light.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
   </section>
   <section class="white">
     <code>default (inherit), size="md"</code>
-    <powered-by-garno size="md"><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+    <powered-by-garno size="md"><a href="https://garno.com.au/"><img src="./powered-by-garno-light.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
   </section>
   <section class="night">
     <code>theme="dark"</code>
-    <powered-by-garno theme="dark"><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+    <powered-by-garno theme="dark"><a href="https://garno.com.au/"><img src="./powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
   </section>
   <section class="brand">
     <code>default (inherit) on a client's own colour</code>
-    <powered-by-garno><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+    <powered-by-garno><a href="https://garno.com.au/"><img src="./powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
+  </section>
+  <section class="night">
+    <code>image only, no script (email, site builders)</code>
+    <a href="https://garno.com.au/"><img src="./powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24"></a>
   </section>
   <div class="spacer">scroll: the badge below animates when it comes into view</div>
   <section class="night">
     <span>© 2026 Client Pty Ltd</span>
-    <powered-by-garno theme="dark"><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+    <powered-by-garno theme="dark"><a href="https://garno.com.au/"><img src="./powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
   </section>
 </body>
 </html>

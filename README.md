@@ -17,18 +17,39 @@ Nuxt, React, Vue, Svelte or a static page without an adapter.
   garno.com.au (that would add a third-party request to every client page).
 - **Accessible.** One link, named "Powered by Garno (opens in a new tab)", with
   a visible focus ring. Animation never runs under `prefers-reduced-motion`.
-- **Works without JavaScript.** The `<a>` you put inside the tag is shown if
-  the script never runs.
+- **Never shows a bare link.** The fallback inside the tag is the static
+  badge image, so without JavaScript the credit still looks right.
+- **Loads anywhere.** A plain script with no imports or exports: it works as
+  `<script defer>`, as `<script type="module">`, from a bundler `import`, and
+  even on a page opened straight from disk.
 
 ## Markup
 
 ```html
-<script type="module" src="/path/to/powered-by-garno.js"></script>
+<script src="/path/to/powered-by-garno.js" defer></script>
 
 <powered-by-garno theme="dark">
-  <a href="https://garno.com.au/">Powered by Garno</a>
+  <a href="https://garno.com.au/">
+    <img src="/path/to/powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24">
+  </a>
 </powered-by-garno>
 ```
+
+Use `powered-by-garno-light.svg` in the fallback on light footers.
+
+### Image only
+
+Where you cannot add a script - a site builder, an email signature, a PDF -
+use the image on its own. It is an SVG that plays the same arrow animation
+once when it loads (and not under reduced motion):
+
+```html
+<a href="https://garno.com.au/" target="_blank" rel="noopener">
+  <img src="powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24">
+</a>
+```
+
+For email, convert it to PNG first: most email clients do not show SVG.
 
 | Attribute | Values | Default |
 |-----------|--------|---------|
@@ -57,13 +78,15 @@ The script is only enqueued on pages that render a badge.
 
 ## Laravel
 
-Copy `powered-by-garno.js` to `public/vendor/garno/`, then in the layout:
+Copy `powered-by-garno.js` and the two SVGs to `public/vendor/garno/`, then in the layout:
 
 ```blade
-<script type="module" src="{{ asset('vendor/garno/powered-by-garno.js') }}"></script>
+<script src="{{ asset('vendor/garno/powered-by-garno.js') }}" defer></script>
 ...
 <footer>
-  <powered-by-garno theme="dark"><a href="https://garno.com.au/">Powered by Garno</a></powered-by-garno>
+  <powered-by-garno theme="dark">
+    <a href="https://garno.com.au/"><img src="{{ asset('vendor/garno/powered-by-garno-dark.svg') }}" alt="Powered by Garno" width="140" height="24"></a>
+  </powered-by-garno>
 </footer>
 ```
 
@@ -87,13 +110,15 @@ Then use the tag in any template:
 ```jsx
 // React 19+ passes attributes to custom elements directly.
 <powered-by-garno theme="dark">
-  <a href="https://garno.com.au/">Powered by Garno</a>
+  <a href="https://garno.com.au/">
+    <img src="/powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24" />
+  </a>
 </powered-by-garno>
 ```
 
-Next.js / Nuxt: import it in a client-only component (`'use client'` or
+(Copy the SVG into the app's `public/` folder.) Next.js / Nuxt: import it in a client-only component (`'use client'` or
 `<ClientOnly>`), because `customElements` exists only in the browser. The
-server still renders the fallback link.
+server still renders the fallback image.
 
 Express or plain HTML: serve the file statically and use the `<script>` tag.
 
@@ -106,9 +131,4 @@ than deciding for them.
 
 ## Demo
 
-```bash
-python3 -m http.server 8765
-```
-
-Open http://127.0.0.1:8765/demo.html. (Module scripts do not load from
-`file://`, so the demo needs a local server.)
+Open `demo.html` in a browser - it works straight from disk.
