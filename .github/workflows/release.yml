@@ -22,10 +22,9 @@ jobs:
 
       - name: Build the plugin zip
         run: |
-          mkdir -p build/powered-by-garno
-          cp powered-by-garno.php powered-by-garno.js \
-             powered-by-garno-light.svg powered-by-garno-dark.svg README.md \
-             build/powered-by-garno/
+          mkdir -p build/powered-by-garno/src
+          cp powered-by-garno.php powered-by-garno.js README.md build/powered-by-garno/
+          cp src/Attribution.php build/powered-by-garno/src/
           (cd build && zip -qr ../powered-by-garno.zip powered-by-garno)
           unzip -l powered-by-garno.zip
 

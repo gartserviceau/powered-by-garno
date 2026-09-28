@@ -1,7 +1,7 @@
 {
   "name": "powered-by-garno",
-  "version": "1.0.0",
-  "description": "The \"Powered by Garno\" credit as a dependency-free web component.",
+  "version": "2.0.0",
+  "description": "The GARNO website attribution (\"Built by GARNO\") as plain HTML and an optional dependency-free custom element.",
   "type": "module",
   "main": "./powered-by-garno.js",
   "module": "./powered-by-garno.js",
@@ -10,18 +10,20 @@
   },
   "files": [
     "powered-by-garno.js",
-    "powered-by-garno-light.svg",
-    "powered-by-garno-dark.svg",
     "README.md"
   ],
+  "scripts": {
+    "test": "node --test tests/attribution.test.mjs && php tests/attribution.test.php"
+  },
   "sideEffects": true,
   "keywords": [
     "web-component",
     "custom-element",
-    "badge",
+    "attribution",
+    "footer",
     "garno"
   ],
-  "author": "Garno <https://garno.com.au/>",
+  "author": "GARNO <https://garno.com.au/>",
   "license": "UNLICENSED",
   "private": true,
   "repository": {

@@ -1,274 +1,118 @@
 /**
- * <powered-by-garno> - the "Powered by Garno" credit for client sites.
+ * <garno-attribution> - the GARNO credit for client sites, for pages that
+ * are not rendered by the WordPress plugin or the Laravel component.
  *
- * One dependency-free file that works anywhere HTML does: WordPress, Laravel,
- * Node, React, Vue, or a static page. It is a standard custom element, so the
- * host framework needs no adapter.
+ * Optional. The attribution is plain HTML, so the tag's content is the
+ * credit itself and works without this script:
+ *
+ *   <garno-attribution mode="built">Built by <a href="https://garno.com.au/">GARNO</a></garno-attribution>
+ *
+ * With the script loaded, the content is rendered from the attributes, so an
+ * empty tag is enough:
  *
  *   <script src="/path/to/powered-by-garno.js" defer></script>
- *   <powered-by-garno theme="dark">
- *     <a href="https://garno.com.au/"><img src="/path/to/powered-by-garno-dark.svg"
- *        alt="Powered by Garno" width="140" height="24"></a>
- *   </powered-by-garno>
- *
- * The link inside is the no-JavaScript fallback - the static badge image -
- * shown if the script never runs and replaced by the live badge when it does.
+ *   <garno-attribution mode="maintained"></garno-attribution>
  *
  * Attributes (all optional):
- *   theme   "inherit" (default: takes the surrounding text colour, so it sits
- *           quietly in any footer), "light" (brand colours on a light
- *           background) or "dark" (for dark footers).
- *   size    "sm" (default, 12px text) or "md" (14px).
- *   href    Where the badge links. Defaults to the Garno site, tagged with
- *           the host name so referrals can be told apart.
- *   target  "_blank" (default) or "_self".
- *   rel     Extra link relations, e.g. "nofollow". "noopener" is always
- *           added for a new tab.
+ *   mode    "built" (default), "improved", "maintained" or "custom".
+ *           "powered" still works but is deprecated.
+ *   text    The wording for mode="custom". Its first "GARNO" becomes the
+ *           link; without one, " GARNO" is appended.
+ *   url     Where "GARNO" links. Defaults to https://garno.com.au/.
+ *   target  "_blank" opens a new tab (and adds rel="noopener"); by default
+ *           the link opens in the same tab.
+ *   rel     Extra link relations, e.g. "nofollow".
+ *   hidden  The standard attribute hides it.
  *
- * Built to be a good guest on someone else's site:
- *   - Shadow DOM, so the host's CSS cannot break it and its CSS cannot leak.
- *   - Styles via a constructable stylesheet, which strict CSPs without
- *     'unsafe-inline' allow; a <style> fallback covers old browsers.
- *   - No network requests, no fonts, no tracking. The logo is inline SVG.
- *   - Animation plays once when the badge scrolls into view and on hover or
- *     focus; never under prefers-reduced-motion.
+ * Light DOM, no styles: it inherits the footer's font and colours, and the
+ * host's CSS can style `.garno-attribution` or the link like any other text.
  *
- * Source: packages/powered-by-garno in the Garno repository.
+ * <powered-by-garno> is the deprecated 1.x name for the same element; its
+ * `href` is read as `url`, and `theme` and `size` are ignored.
  */
 
 // A classic script with no imports or exports, wrapped so nothing leaks into
-// the host page's globals. That is what lets the same file load everywhere:
-// a plain <script> (including a page opened from disk, where browsers refuse
-// module scripts), <script type="module">, or `import` from a bundler.
+// the host page's globals. That lets the same file load everywhere: a plain
+// <script>, <script type="module">, or `import` from a bundler.
 (() => {
-  const VERSION = '1.0.0';
-  const HOME = 'https://garno.com.au/';
+  const VERSION = '2.0.0';
+  const URL_DEFAULT = 'https://garno.com.au/';
+  const NAME = 'GARNO';
+  const MODES = {
+    built: 'Built by',
+    improved: 'Improved by',
+    maintained: 'Maintained by',
+    powered: 'Powered by', // Deprecated: GARNO is not the platform a site runs on.
+  };
 
-  // The G and the arrow from the Garno logo, cropped to the mark alone.
-  const MARK = `
-  <svg class="mark" viewBox="176 146 432 408" aria-hidden="true" focusable="false">
-    <defs>
-      <mask id="knock" maskUnits="userSpaceOnUse" x="176" y="146" width="432" height="408">
-        <rect x="176" y="146" width="432" height="408" fill="#fff"/>
-        <polygon points="190,327 408,327 365,270 433,270 498,352 433,434 365,434 408,382 190,382"
-          fill="#000" stroke="#000" stroke-width="36" stroke-linejoin="round"/>
-      </mask>
-    </defs>
-    <g mask="url(#knock)">
-      <path class="ring" d="M550 350 A160 160 0 1 1 535 282.4" fill="none" stroke="currentColor" stroke-width="78"/>
-      <rect class="bar" x="506" y="326" width="90" height="72" fill="currentColor"/>
-    </g>
-    <polygon class="arrow" points="190,327 408,327 365,270 433,270 498,352 433,434 365,434 408,382 190,382"/>
-  </svg>`;
+  const escape = (value) => String(value).replace(/[&<>"']/g, (c) => `&#${c.charCodeAt(0)};`);
+  const tokens = (value, pattern) => [...new Set(String(value || '').trim().split(/\s+/).filter((t) => pattern.test(t)))];
 
-  const CSS = `
-  :host {
-    display: inline-block;
-    vertical-align: middle;
-    line-height: 1;
-    --pbg-amber: #fdb813;
-    --pbg-mark: currentColor;
-    --pbg-text: currentColor;
-    --pbg-muted: currentColor;
-    --pbg-muted-opacity: 0.72;
-    --pbg-size: 12px;
-  }
-  :host([hidden]) { display: none; }
-  :host([size="md"]) { --pbg-size: 14px; }
-  :host([theme="light"]) {
-    --pbg-mark: #0444b4;
-    --pbg-text: #14171a;
-    --pbg-muted: #5b6168;
-    --pbg-muted-opacity: 1;
-  }
-  :host([theme="dark"]) {
-    --pbg-mark: #ffffff;
-    --pbg-text: #f1efe9;
-    --pbg-muted: #a3a9b1;
-    --pbg-muted-opacity: 1;
-  }
+  /** The text before and after the linked name. */
+  function wording(mode, text) {
+    mode = String(mode || '').trim().toLowerCase();
+    text = String(text || '').replace(/\s+/g, ' ').trim();
 
-  a {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-    min-height: 24px;
-    padding: 2px 4px;
-    border-radius: 6px;
-    font: 500 var(--pbg-size)/1 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-    letter-spacing: 0.01em;
-    color: var(--pbg-text);
-    text-decoration: none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  a:focus-visible {
-    outline: 2px solid currentColor;
-    outline-offset: 2px;
-  }
-
-  .mark {
-    width: 1.6em;
-    height: 1.5em;
-    flex: none;
-    overflow: visible;
-    color: var(--pbg-mark);
-  }
-  .arrow { fill: var(--pbg-amber); }
-
-  .by {
-    color: var(--pbg-muted);
-    opacity: var(--pbg-muted-opacity);
-  }
-  .name {
-    font-weight: 700;
-    letter-spacing: -0.01em;
-  }
-
-  @media (prefers-reduced-motion: no-preference) {
-    /* Entrance, once, when the badge first scrolls into view. */
-    :host([data-state="enter"]) .arrow {
-      animation: pbg-shoot 700ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
-    }
-    :host([data-state="enter"]) .ring {
-      stroke-dasharray: 960;
-      animation: pbg-draw 650ms cubic-bezier(0.65, 0, 0.25, 1) 250ms both;
-    }
-    :host([data-state="enter"]) .text {
-      animation: pbg-fade 500ms cubic-bezier(0.2, 0.8, 0.2, 1) 350ms both;
+    if (mode === 'custom' && text) {
+      const at = text.indexOf(NAME);
+      return at === -1 ? [`${text} `, ''] : [text.slice(0, at), text.slice(at + NAME.length)];
     }
 
-    /* Hover and focus: the arrow nudges through the G and back. */
-    .arrow {
-      transition: transform 380ms cubic-bezier(0.2, 0.8, 0.2, 1);
-    }
-    a:hover .arrow,
-    a:focus-visible .arrow {
-      transform: translateX(90px); /* SVG units: ~4px at 12px text */
-    }
-    a:hover .name,
-    a:focus-visible .name {
-      text-decoration: underline;
-      text-underline-offset: 0.2em;
-    }
+    return [`${MODES[mode] || MODES.built} `, ''];
   }
 
-  @keyframes pbg-shoot {
-    0% { transform: translateX(-340px); opacity: 0; }
-    30% { opacity: 1; }
-    80% { transform: translateX(24px); }
-    100% { transform: translateX(0); }
-  }
-  @keyframes pbg-draw {
-    from { stroke-dashoffset: 960; }
-    to { stroke-dashoffset: 0; }
-  }
-  @keyframes pbg-fade {
-    from { opacity: 0; transform: translateX(-4px); }
-    to { opacity: 1; transform: none; }
-  }
-  `;
+  /** The attribution markup; mirrors Attribution::render() in PHP. */
+  function html({ mode, text, url, show = true, className, target, rel } = {}) {
+    if (show === false || /^(0|false|no|off|)$/i.test(String(show).trim())) return '';
 
-  let sheet = null;
-  function styles() {
-    if (sheet === null) {
-      try {
-        sheet = new CSSStyleSheet();
-        sheet.replaceSync(CSS);
-      } catch {
-        sheet = false; // No constructable stylesheets: fall back to <style>.
-      }
-    }
-    return sheet;
+    const [before, after] = wording(mode, text);
+    const href = /^https?:\/\/[^\s"<>]+$/i.test(String(url || '').trim()) ? String(url).trim() : URL_DEFAULT;
+    const blank = target === '_blank';
+
+    const rels = tokens(String(rel || '').toLowerCase(), /^[a-z-]+$/);
+    if (blank && !rels.includes('noopener')) rels.push('noopener');
+
+    const classes = [...new Set(['garno-attribution', ...tokens(className, /^[A-Za-z0-9_-]+$/)])];
+
+    const link = `<a href="${escape(href)}"`
+      + (blank ? ' target="_blank"' : '')
+      + (rels.length ? ` rel="${escape(rels.join(' '))}"` : '')
+      + (blank ? ` aria-label="${NAME} (opens in a new tab)"` : '')
+      + `>${NAME}</a>`;
+
+    return `<span class="${escape(classes.join(' '))}">${escape(before)}${link}${escape(after)}</span>`;
   }
 
-  function defaultHref() {
-    try {
-      const url = new URL(HOME);
-      url.searchParams.set('utm_source', window.location.hostname || 'badge');
-      url.searchParams.set('utm_medium', 'powered-by-badge');
-      return url.toString();
-    } catch {
-      return HOME;
-    }
-  }
+  class GarnoAttribution extends HTMLElement {
+    static observedAttributes = ['mode', 'text', 'url', 'href', 'target', 'rel'];
 
-  class PoweredByGarno extends HTMLElement {
-    static observedAttributes = ['href', 'target', 'rel'];
+    static version = VERSION;
+
+    static html = html;
 
     connectedCallback() {
-      if (!this.shadowRoot) {
-        this.render();
-        this.observe();
-      }
-    }
-
-    disconnectedCallback() {
-      this.observer?.disconnect();
+      this.render();
     }
 
     attributeChangedCallback() {
-      if (this.shadowRoot) this.updateLink();
+      if (this.isConnected) this.render();
     }
 
     render() {
-      const root = this.attachShadow({ mode: 'open' });
-      const sheet = styles();
-
-      if (sheet) {
-        root.adoptedStyleSheets = [sheet];
-      } else {
-        const style = document.createElement('style');
-        style.textContent = CSS;
-        root.append(style);
-      }
-
-      const link = document.createElement('a');
-      link.setAttribute('part', 'link');
-      link.innerHTML = `${MARK}<span class="text"><span class="by">Powered by</span> <span class="name">Garno</span></span>`;
-      root.append(link);
-
-      this.link = link;
-      this.updateLink();
-    }
-
-    updateLink() {
-      const target = this.getAttribute('target') === '_self' ? '_self' : '_blank';
-      this.link.href = this.getAttribute('href') || defaultHref();
-      this.link.target = target;
-
-      const rel = new Set((this.getAttribute('rel') || '').split(/\s+/).filter(Boolean));
-      if (target === '_blank') rel.add('noopener');
-
-      if (rel.size) {
-        this.link.rel = [...rel].join(' ');
-      } else {
-        this.link.removeAttribute('rel');
-      }
-
-      this.link.setAttribute(
-        'aria-label',
-        target === '_blank' ? 'Powered by Garno (opens in a new tab)' : 'Powered by Garno',
-      );
-    }
-
-    // Play the entrance once, the first time the badge is actually seen.
-    observe() {
-      if (!('IntersectionObserver' in window)) return;
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-
-      this.observer = new IntersectionObserver((entries) => {
-        if (!entries.some((entry) => entry.isIntersecting)) return;
-        this.observer.disconnect();
-        this.dataset.state = 'enter';
-      }, { threshold: 0.6 });
-
-      this.observer.observe(this);
+      this.innerHTML = html({
+        mode: this.getAttribute('mode'),
+        text: this.getAttribute('text'),
+        url: this.getAttribute('url') || this.getAttribute('href'),
+        target: this.getAttribute('target'),
+        rel: this.getAttribute('rel'),
+      });
     }
   }
 
-  PoweredByGarno.version = VERSION;
+  // The deprecated 1.x tag. A separate subclass because one constructor
+  // cannot be registered under two names.
+  class PoweredByGarno extends GarnoAttribution {}
 
-  if (!customElements.get('powered-by-garno')) {
-    customElements.define('powered-by-garno', PoweredByGarno);
-  }
+  if (!customElements.get('garno-attribution')) customElements.define('garno-attribution', GarnoAttribution);
+  if (!customElements.get('powered-by-garno')) customElements.define('powered-by-garno', PoweredByGarno);
 })();

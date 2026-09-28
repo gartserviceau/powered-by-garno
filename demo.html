@@ -3,45 +3,48 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Powered by Garno - demo</title>
+  <title>GARNO attribution - demo</title>
   <style>
     body { margin: 0; font-family: system-ui, sans-serif; }
-    section { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 28px 32px; flex-wrap: wrap; }
-    code { font-size: 13px; opacity: 0.7; }
+    footer { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 20px 32px; flex-wrap: wrap; font-size: 14px; }
+    code { display: block; padding: 20px 32px 0; font-size: 13px; opacity: 0.7; }
+    footer a { color: inherit; }
     .paper { background: #f7f6f2; color: #14171a; }
-    .white { background: #fff; color: #333; }
     .night { background: #0c0f14; color: #d0d4da; }
-    .brand { background: #7a1f3d; color: #f5e9ee; }
-    a img { display: block; }
-    .spacer { height: 60vh; display: grid; place-items: center; color: #888; }
+    .brand { background: #7a1f3d; color: #f5e9ee; font-family: Georgia, serif; }
+    .brand .garno-attribution { opacity: 0.75; }
   </style>
   <script src="./powered-by-garno.js" defer></script>
 </head>
 <body>
-  <section class="paper">
-    <code>theme="light"</code>
-    <powered-by-garno theme="light"><a href="https://garno.com.au/"><img src="./powered-by-garno-light.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
-  </section>
-  <section class="white">
-    <code>default (inherit), size="md"</code>
-    <powered-by-garno size="md"><a href="https://garno.com.au/"><img src="./powered-by-garno-light.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
-  </section>
-  <section class="night">
-    <code>theme="dark"</code>
-    <powered-by-garno theme="dark"><a href="https://garno.com.au/"><img src="./powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
-  </section>
-  <section class="brand">
-    <code>default (inherit) on a client's own colour</code>
-    <powered-by-garno><a href="https://garno.com.au/"><img src="./powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
-  </section>
-  <section class="night">
-    <code>image only, no script (email, site builders)</code>
-    <a href="https://garno.com.au/"><img src="./powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24"></a>
-  </section>
-  <div class="spacer">scroll: the badge below animates when it comes into view</div>
-  <section class="night">
-    <span>© 2026 Client Pty Ltd</span>
-    <powered-by-garno theme="dark"><a href="https://garno.com.au/"><img src="./powered-by-garno-dark.svg" alt="Powered by Garno" width="140" height="24"></a></powered-by-garno>
-  </section>
+  <code>Plain HTML, no script needed (default: built)</code>
+  <footer class="paper">
+    <span>© 2026 Client Business. All rights reserved.</span>
+    <span class="garno-attribution">Built by <a href="https://garno.com.au/">GARNO</a></span>
+  </footer>
+
+  <code>&lt;garno-attribution mode="improved"&gt;</code>
+  <footer class="night">
+    <span>© 2026 Client Business. All rights reserved.</span>
+    <garno-attribution mode="improved"></garno-attribution>
+  </footer>
+
+  <code>&lt;garno-attribution mode="maintained"&gt;, themed by the host's CSS</code>
+  <footer class="brand">
+    <span>© 2026 Client Business. All rights reserved.</span>
+    <garno-attribution mode="maintained"></garno-attribution>
+  </footer>
+
+  <code>&lt;garno-attribution mode="custom" text="Website support by"&gt;</code>
+  <footer class="paper">
+    <span>© 2026 Client Business. All rights reserved.</span>
+    <garno-attribution mode="custom" text="Website support by"></garno-attribution>
+  </footer>
+
+  <code>Deprecated 1.x tag: &lt;powered-by-garno theme="dark"&gt; now renders "Built by GARNO"</code>
+  <footer class="night">
+    <span>© 2026 Client Business. All rights reserved.</span>
+    <powered-by-garno theme="dark"></powered-by-garno>
+  </footer>
 </body>
 </html>

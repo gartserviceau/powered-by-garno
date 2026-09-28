@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   check:
-    name: Lint and version consistency
+    name: Lint, tests and version consistency
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
@@ -35,11 +35,11 @@ jobs:
       - name: composer.json
         run: composer validate --strict --no-check-lock
 
-      - name: SVGs are well-formed
-        run: |
-          for svg in *.svg; do
-            python3 -c "import sys, xml.dom.minidom; xml.dom.minidom.parse(sys.argv[1])" "$svg"
-          done
+      - name: PHP tests (renderer, WordPress, Laravel)
+        run: php tests/attribution.test.php
+
+      - name: JavaScript tests (element, parity with PHP)
+        run: node --test tests/attribution.test.mjs
 
       # The version lives in three places a release reads; they must agree.
       - name: Versions agree

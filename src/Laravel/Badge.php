@@ -2,43 +2,53 @@
 
 namespace Garno\PoweredBy\Laravel;
 
+use Garno\PoweredBy\Attribution;
 use Illuminate\Contracts\View\View;
 use Illuminate\View\Component;
 
 /**
- * <x-garno-badge theme="dark" />
+ * <x-garno-attribution mode="maintained" />
  *
- * Renders the <powered-by-garno> element with the static SVG as its no-JS
- * fallback, and includes the script once per page however many badges it has.
+ * Renders the GARNO attribution as plain HTML: no script, no assets. Any
+ * `class` given on the tag is added to the wrapper. Also registered as the
+ * deprecated 1.x <x-garno-badge />, whose `theme` and `size` are ignored.
  */
 class Badge extends Component
 {
-    public string $theme;
-
-    public string $size;
-
-    public string $target;
-
     public function __construct(
-        string $theme = 'inherit',
-        string $size = 'sm',
-        public ?string $href = null,
-        string $target = '_blank',
+        public string $mode = Attribution::DEFAULT_MODE,
+        public ?string $text = null,
+        public ?string $url = null,
+        public bool $show = true,
+        public ?string $target = null,
         public ?string $rel = null,
+        ?string $href = null, // 1.x name for url.
+        ?string $theme = null, // 1.x, ignored.
+        ?string $size = null, // 1.x, ignored.
     ) {
-        $this->theme = in_array($theme, ['inherit', 'light', 'dark'], true) ? $theme : 'inherit';
-        $this->size = in_array($size, ['sm', 'md'], true) ? $size : 'sm';
-        $this->target = $target === '_self' ? '_self' : '_blank';
+        $this->url ??= $href;
     }
 
-    /** The fallback image: dark on dark footers, light everywhere else. */
-    public function image(): string
+    public function html(?string $class = null): string
     {
-        return asset('vendor/garno/powered-by-garno-' . ($this->theme === 'dark' ? 'dark' : 'light') . '.svg');
+        return Attribution::render([
+            'mode' => $this->mode,
+            'text' => (string) $this->text,
+            'url' => (string) $this->url,
+            'show' => $this->show,
+            'class' => (string) $class,
+            'target' => (string) $this->target,
+            'rel' => (string) $this->rel,
+        ]);
+    }
+
+    public function shouldRender(): bool
+    {
+        return $this->show;
     }
 
     public function render(): View
     {
-        return view('garno-badge::badge');
+        return view('garno-badge::attribution');
     }
 }

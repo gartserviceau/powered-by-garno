@@ -1,12 +1,12 @@
 {
     "name": "garno/powered-by-garno",
-    "description": "The Powered by Garno credit badge: a dependency-free web component, a WordPress plugin and a Laravel Blade component.",
+    "description": "The GARNO website attribution (\"Built by GARNO\"): a WordPress plugin, a Laravel Blade component and plain HTML.",
     "type": "wordpress-plugin",
     "license": "proprietary",
     "homepage": "https://garno.com.au/",
     "authors": [
         {
-            "name": "Garno",
+            "name": "GARNO",
             "homepage": "https://garno.com.au/"
         }
     ],

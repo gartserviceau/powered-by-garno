@@ -1,0 +1,1 @@
+{!! $html($attributes->get('class')) !!}
